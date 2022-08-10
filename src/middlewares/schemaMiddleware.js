@@ -4,9 +4,7 @@ export function validateSchemaMiddleware(schema) {
     const { error } = schema.validate(body, { abortEarly: false });
 
     if (error) {
-      return res.status(422).send({
-        details: error.details.map((e) => e.message),
-      });
+      return res.status(422).send(error.details.map((e) => e.message));
     }
 
     res.locals.body = req.body;

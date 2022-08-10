@@ -16,4 +16,17 @@ authRouter.post(
     controller.postSignIn
 );
 
+authRouter.post(
+    "/sign-up",
+    validateSchemaMiddleware(schema.signUp),
+    middleware.checkEmailDuplicate,
+    middleware.checkUsernameDuplicate,
+    controller.postSignUp
+  );
+
 export default authRouter;
+
+
+
+
+

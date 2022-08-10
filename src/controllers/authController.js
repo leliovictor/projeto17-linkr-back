@@ -9,7 +9,12 @@ export async function postSignUp(_req, res) {
   const passwordCript = bcrypt.hashSync(password, 10);
 
   try {
-    await authRepository.insertUserAtUsers(email, passwordCript, username, pictureUrl);
+    await authRepository.insertUserAtUsers(
+      email,
+      passwordCript,
+      username,
+      pictureUrl
+    );
     return res.sendStatus(201);
   } catch (error) {
     console.log(error);
@@ -18,12 +23,23 @@ export async function postSignUp(_req, res) {
 }
 
 export async function postSignIn(_req, res) {
-  const { email } = res.locals.body;
+  const { id, email, pictureUrl, username } = res.locals.user;
 
   const TIME_60M = 60 * 60;
   const secretKey = process.env.JWT_SECRET;
-  const data = {email};
+  const data = { id, email };
   const token = jwt.sign(data, secretKey, { expiresIn: TIME_60M });
 
-  return res.status(200).send(token);
+  const body = {
+    email,
+    username,
+    pictureUrl,
+    config: {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  };
+
+  return res.status(200).send(body);
 }

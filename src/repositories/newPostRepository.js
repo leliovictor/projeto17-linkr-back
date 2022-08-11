@@ -1,9 +1,9 @@
 import connection from "../config/db.js";
 
 export default async function addNewPost (url, message, userId){
-    const query = `INSERT INTO posts (url, message, "userId") VALUES ($1, $2, $3, $4)`;
+    const query = `INSERT INTO posts (url, message, "userId") VALUES ($1, $2, $3)`;
 
-    const valeus = [url, message, userId];
+    const values = [url, message, userId];
 
-    return connection.query(query,value);
+    return connection.query(query,values);
 }

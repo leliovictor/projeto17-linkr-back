@@ -5,11 +5,10 @@ import { newPost } from "../controllers/newPostController.js";
 import newPostSchema from "../schemas/postSchemas.js";
 
 const newPostRouter = Router();
-
 newPostRouter.post(
     '/posts',
     checkAuthentication,
-    validateSchemaMiddleware(newPostSchema),
+    validateSchemaMiddleware(newPostSchema.newPostSchema),
     newPost
   );
 

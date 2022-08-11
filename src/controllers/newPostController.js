@@ -1,13 +1,14 @@
-import connection from "../config/db";
+import  addNewPost  from "../repositories/newPostRepository.js";
 
-export default function newPost(req, res){
-    const  newPost  = res.locals.post
-    const  userId  = res.locals.id
+export async function newPost(req, res){
+    const  newPost  = res.locals.body
+    const  data  = res.locals.data
+    console.log(newPost)
+    console.log(userId)
     
     try{
-        await connection.query(`INSERT INTO posts (url, message, "userId") VALUES ($1, $2, $3, $4)`, [newPost.url, newPost.message, userId ]);
+        await addNewPost(newPost.url, newPost.message, data.userId);
         res.sendStatus(201);
-
     }catch (error){
         res.sendStatus(error)
     }

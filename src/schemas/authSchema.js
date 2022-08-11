@@ -15,4 +15,9 @@ const signIn = joi.object({
   password: joi.string().required(),
 });
 
-export { signIn, signUp };
+const newPostSchema = joi.object({
+  url: joi.string().uri().required(),
+  message: joi.string(255),
+});
+
+export { signIn, signUp, newPostSchema };

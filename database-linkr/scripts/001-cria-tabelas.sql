@@ -14,7 +14,7 @@ CREATE TABLE users (
 CREATE TABLE posts (
 	"id" serial NOT NULL,
 	"url" varchar NOT NULL,
-	"message" varchar NOT NULL,
+	"message" varchar,
 	"userId" integer NOT NULL,
 	"likes" integer NOT NULL DEFAULT '0',
 	CONSTRAINT "posts_pk" PRIMARY KEY ("id")

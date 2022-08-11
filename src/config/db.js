@@ -8,7 +8,7 @@ const user = 'postgres';
 const password = 'brandao92167';
 const host = 'localhost';
 const port = 5432;
-const database = 'linkr';
+const database = 'linkr_database';
 
 const connection = new Pool({
   user,

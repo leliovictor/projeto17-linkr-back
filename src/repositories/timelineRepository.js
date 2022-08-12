@@ -22,6 +22,7 @@ async function getTredingHashtags(){
 const timelineRepository = {
     getPosts,
     getTredingHashtags
+    
 };
 
 export default timelineRepository;

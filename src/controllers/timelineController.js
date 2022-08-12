@@ -40,19 +40,4 @@ async function getTrendingList(req,res){
 	
 	}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 export { getPosts, getTrendingList };

@@ -5,8 +5,8 @@ const signUp = joi.object({
   password: joi.string().required(),
   username: joi.string().required(),
   pictureUrl: joi
-    .string()
-    .pattern(/(http)?s?:?(\/\/[^"']*\.(?:png|jpg|jpeg|svg))/)
+    .string().uri()
+    //.pattern(/(http)?s?:?(\/\/[^"']*\.(?:png|jpg|jpeg|svg))/)
     .required(),
 });
 

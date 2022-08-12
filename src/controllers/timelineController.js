@@ -20,7 +20,6 @@ const getPosts = async (req, res) => {
 		);
 
 		await Promise.all(arrayMap);
-
         res.status(200).send(postsData);
     } catch (error) {
         console.log(error);
@@ -28,4 +27,32 @@ const getPosts = async (req, res) => {
     }
 };
 
-export { getPosts };
+async function getTrendingList(req,res){
+	
+	try{
+		const trendingList = await timelineRepository.getTredingHashtags()
+		
+		res.status(200).send(trendingList.rows)
+		
+	  }catch (error){
+		res.sendStatus(error)
+	  }    
+	
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+export { getPosts, getTrendingList };

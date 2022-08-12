@@ -17,7 +17,7 @@ async function getHashtagsByName(hashtag){
 }
 
 async function getPosts(message, userId){
-    const query = `SELECT * FROM posts WHERE (message=$1 AND "userId" = $2)`
+    const query = `SELECT * FROM posts WHERE (message=$1 AND "userId" = $2) ORDER BY id DESC`;
 
     const value = [message, userId]
 

@@ -8,8 +8,8 @@ const router = Router();
 
 
 //router.use(//rotas);
-router.use(timelineRouter);
 router.use(authRouter);
+router.use(timelineRouter);
 router.use(newPostRouter)
 
 export default router;

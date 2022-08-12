@@ -15,7 +15,7 @@ export async function newPost(req, res){
     try{
         await newPostRepository.addNewPost(newPost.url, newPost.message, data.id);
         if (newPost.message){
-            const hashtags = findHashtags(newPost.message)
+            const hashtags = findHashtags(newPost.message);
             if(hashtags.length > 0){
                 for (let i=0; i<hashtags.length; i++){
                     const registeredHashtags = await newPostRepository.getHashtagsByName(hashtags[i]);

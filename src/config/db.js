@@ -1,17 +1,21 @@
-import pg from "pg";
-import dotenv from "dotenv";
+import pg from 'pg';
+import dotenv from 'dotenv';
 
 dotenv.config();
-
 const { Pool } = pg;
 
-const databaseConfig = {
-  connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false,
-  },
-};
+const user = 'postgres';
+const password = 'brandao92167';
+const host = 'localhost';
+const port = 5432;
+const database = 'linkr_database';
 
-const connection = new Pool(databaseConfig);
+const connection = new Pool({
+  user,
+  password,
+  host,
+  port,
+  database
+});
 
 export default connection;

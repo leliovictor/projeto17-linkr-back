@@ -46,13 +46,23 @@ async function deleteLiker (userId, postId) {
     )
 };
 
+async function usersWhoLikedThePost (postId) {
+    return connection.query(`
+    SELECT users.username
+	FROM users
+	JOIN "postsUsers-likes" ON "postsUsers-likes"."userId" = users.id
+	WHERE "postsUsers-likes"."postId" = $1`, 
+    [postId])
+};
+
 const timelineRepository = {
     getPosts,
     post,
     like,
     dislike,
     insertLiker,
-    deleteLiker
+    deleteLiker,
+    usersWhoLikedThePost
 };
 
 

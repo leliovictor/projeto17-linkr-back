@@ -1,9 +1,12 @@
 import { Router } from "express";
-import { getPosts } from "../controllers/timelineController.js"
+import { getPosts, like, dislike } from "../controllers/timelineController.js"
 
 const timelineRouter = Router();
 
 timelineRouter.get("/timeline", getPosts);
+timelineRouter.post("/timeline/:post/like", like);
+timelineRouter.post("/timeline/:post/dislike", dislike);
+
 
 export default timelineRouter;
 

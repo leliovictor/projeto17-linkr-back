@@ -31,7 +31,7 @@ export async function postSignIn(_req, res) {
   const token = jwt.sign(data, secretKey, { expiresIn: TIME_60M });
 
   const body = {
-    userId:id,
+    id,
     email,
     username,
     pictureUrl,

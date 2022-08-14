@@ -66,20 +66,7 @@ async function usersWhoLikedThePost (postId) {
     [postId])
 };
 
-<<<<<<< HEAD:src/repositories/timelineRepository.js
-async function getTredingHashtags(){
-    const query = `SELECT hp."hashtagId" AS "hashtagId", h.hashtag AS hashtag, COUNT(hp."postId") AS "hashtagCount" FROM "hashtagsPosts" hp
-    JOIN hashtags h
-    ON h.id = hp."hashtagId"
-    GROUP BY hp."hashtagId", h."hashtag" ORDER BY "hashtagCount" DESC LIMIT 10`
-
-    return connection.query(query)
-}
-
-const timelineRepository = {
-=======
 const postsRepository = {
->>>>>>> 99956b684d752d8f60268ded645bd05dabdeebef:src/repositories/postsRepository.js
     getPosts,
     getUserPosts,
     post,
@@ -88,12 +75,7 @@ const postsRepository = {
     insertLiker,
     deleteLiker,
     usersWhoLikedThePost,
-    getTredingHashtags
 };
 
-<<<<<<< HEAD:src/repositories/timelineRepository.js
-export default timelineRepository;
-=======
 
 export default postsRepository;
->>>>>>> 99956b684d752d8f60268ded645bd05dabdeebef:src/repositories/postsRepository.js

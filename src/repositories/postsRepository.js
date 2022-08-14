@@ -74,7 +74,7 @@ const postsRepository = {
     dislike,
     insertLiker,
     deleteLiker,
-    usersWhoLikedThePost
+    usersWhoLikedThePost,
 };
 
 

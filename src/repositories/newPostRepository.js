@@ -37,10 +37,10 @@ async function addNewHashtag(hashtag) {
   return connection.query(query, value);
 }
 
-async function addNewHashtagPost(url, hashtagId, postId) {
+async function addNewHashtagPost(hashtagId, postId) {
   const query = `INSERT INTO "hashtagsPosts" (url, "hashtagId", "postId") VALUES ($1, $2, $3)`;
 
-  const values = [url, hashtagId, postId];
+  const values = [hashtagId, postId];
 
   return connection.query(query, values);
 }

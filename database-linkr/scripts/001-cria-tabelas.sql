@@ -45,7 +45,18 @@ CREATE TABLE hashtags (
 );
 
 
+CREATE TABLE "postsUsers-likes" (
+	"id" serial NOT NULL,
+	"userId" int NOT NULL,
+	"postId" int NOT NULL,
+	CONSTRAINT "postsUsers-likes_pk" PRIMARY KEY ("id")
+) WITH (
+  OIDS=FALSE
+);
 
+
+ALTER TABLE "postsUsers-likes" ADD CONSTRAINT "postsUsers-likes_fk0" FOREIGN KEY ("userId") REFERENCES "users"("id");
+ALTER TABLE "postsUsers-likes" ADD CONSTRAINT "postsUsers-likes_fk1" FOREIGN KEY ("postId") REFERENCES "posts"("id");
 
 ALTER TABLE "posts" ADD CONSTRAINT "posts_fk0" FOREIGN KEY ("userId") REFERENCES "users"("id");
 

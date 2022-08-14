@@ -1,3 +1,5 @@
+import connection from "../config/db.js";
+
 async function getTredingHashtags(){
     const query = `SELECT hp."hashtagId" AS "hashtagId", h.hashtag AS hashtag, COUNT(hp."postId") AS "hashtagCount" FROM "hashtagsPosts" hp
     JOIN hashtags h

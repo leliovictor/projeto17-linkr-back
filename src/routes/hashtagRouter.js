@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { getPostsByHashtags } from "../controllers/getPostsByHashtagController.js";
+import { getTrendingList } from "../controllers/timelineController.js"
 import { checkAuthentication } from "../middlewares/token.middleware.js";
 
-const hashtag = Router();
+const hashtagRouter = Router();
 
-hashtag.get('/hashtag/:hashtag', checkAuthentication, getPostsByHashtags)
+hashtagRouter.get('/hashtags', checkAuthentication, getTrendingList)
 
-export default hashtag;
+export default hashtagRouter;

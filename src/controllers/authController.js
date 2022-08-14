@@ -24,7 +24,6 @@ export async function postSignUp(_req, res) {
 
 export async function postSignIn(_req, res) {
   const { id, email, pictureUrl, username } = res.locals.user;
-  //console.log("res.locals.user: ", res.locals.user);
 
   const TIME_60M = 60 * 60;
   const secretKey = process.env.JWT_SECRET;

@@ -10,6 +10,17 @@ async function getPosts () {
     );
 };
 
+async function getUserPosts (userId) {
+    return connection.query(`
+    SELECT  users.username, users."pictureUrl", posts.url, posts.message, posts."userId", posts.likes, posts.id AS "postId"
+    FROM users 
+    JOIN posts ON posts."userId" = users.id
+    WHERE users.id = $1
+    ORDER BY posts.id DESC
+    LIMIT 20`,
+    [userId]);
+};
+
 async function post (id) {
     return connection.query(`
     SELECT * FROM posts WHERE id = $1`, [id])
@@ -55,8 +66,9 @@ async function usersWhoLikedThePost (postId) {
     [postId])
 };
 
-const timelineRepository = {
+const postsRepository = {
     getPosts,
+    getUserPosts,
     post,
     like,
     dislike,
@@ -66,4 +78,4 @@ const timelineRepository = {
 };
 
 
-export default timelineRepository;
+export default postsRepository;

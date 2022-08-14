@@ -32,13 +32,13 @@ export async function newPost(req, res) {
             hashtags[i]
           );
           await newPostRepository.addNewHashtagPost(
-            newPost.url,
             hashtagId.rows[0].id,
             postId.rows[0].id
           );
         }
       }
     }
+
     res.sendStatus(201);
   } catch (error) {
     res.sendStatus(error);

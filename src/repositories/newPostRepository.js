@@ -38,7 +38,7 @@ async function addNewHashtag(hashtag) {
 }
 
 async function addNewHashtagPost(hashtagId, postId) {
-  const query = `INSERT INTO "hashtagsPosts" (url, "hashtagId", "postId") VALUES ($1, $2, $3)`;
+  const query = `INSERT INTO "hashtagsPosts" ("hashtagId", "postId") VALUES ($1, $2)`;
 
   const values = [hashtagId, postId];
 

@@ -39,6 +39,7 @@ export async function newPost(req, res) {
       }
     }
     res.sendStatus(201);
+    return;
   } catch (error) {
     res.sendStatus(error);
   }

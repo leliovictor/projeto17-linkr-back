@@ -65,7 +65,6 @@ const getHashtagPosts = async (req, res) => {
 			postsData.push({ ...post, urlInfo: { title, image, description }, usersWhoLiked: resultUsersWhoLikedThePost });
 		};
         const { rows: result } = await postsRepository.getPostsByHashtags(hashtag);
-		console.log(result)
 		const arrayMap = result.map((post) =>
 			new Promise(async (resolve, reject) => {
 				const metadata = await urlMetadata(`${post.url}`);

@@ -22,9 +22,11 @@ const getPosts = async (req, res) => {
 		);
 		await Promise.all(arrayMap);
 
-        res.status(200).send(postsData);
+		postsData.sort((a,b)=> b.postId-a.postId);
+
+        return res.status(200).send(postsData);
     } catch (error) {
-        res.status(500).send(error);
+        return res.status(500).send(error);
     };
 };
 
@@ -50,9 +52,9 @@ const getUserPosts = async (req, res) => {
 		);
 		await Promise.all(arrayMap);
 
-        res.status(200).send(userPostsData);
+        return res.status(200).send(userPostsData);
     } catch (error) {
-        res.status(500).send(error);
+        return res.status(500).send(error);
     };
 };
 
@@ -65,9 +67,9 @@ const like = async (req, res) => {
 		await postsRepository.like(post[0].likes, postId);
 		await postsRepository.insertLiker(userId, postId);
 
-		res.sendStatus(200);
+		return res.sendStatus(200);
 	} catch (error) {
-		res.status(500).send(error);
+		return res.status(500).send(error);
 	};
 };
 
@@ -80,9 +82,9 @@ const dislike = async (req, res) => {
 		await postsRepository.dislike(post[0].likes, postId);
 		await postsRepository.deleteLiker(userId, postId);
 
-		res.sendStatus(200);
+		return res.sendStatus(200);
 	} catch (error) {
-		res.status(500).send(error);
+		return res.status(500).send(error);
 	};
 };
 

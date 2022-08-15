@@ -2,6 +2,7 @@ import pg from "pg";
 import dotenv from "dotenv";
 
 dotenv.config();
+
 const { Pool } = pg;
 
 const connection = new Pool({
@@ -10,5 +11,6 @@ const connection = new Pool({
       rejectUnauthorized: false
   }
 });
+
 
 export default connection;

@@ -47,11 +47,15 @@ export async function newPost(_req, res) {
 }
 
 export async function deletePost(_req, res) {
-  const { postId } = res.locals.postId;
+  const { postId } = res.locals;
 
   try {
-    await newPostRepository.deletePostFromHashtagsPosts(postId);
-    await newPostRepository.deletePostById(postId);
+    //middleware
+    const res1 = await newPostRepository.deletePostFromHashtagsPosts(postId);
+    //middleware
+    const res2 = await newPostRepository.deletePostFromPostLikes(postId);
+
+    if (res1 && res2) await newPostRepository.deletePostById(postId);
     return res.status(202).send("Post deleted");
   } catch (err) {
     console.log(`Error controller: ${err}`);

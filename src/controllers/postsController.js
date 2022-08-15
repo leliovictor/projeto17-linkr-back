@@ -138,4 +138,4 @@ const postSearchUser = async (_req, res) => {
   }
 };
 
-export { getPosts, like, dislike, getUserPosts, postSearchUser };
+export { getPosts, like, dislike, getUserPosts, postSearchUser, getHashtagPosts };

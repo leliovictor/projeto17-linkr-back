@@ -53,6 +53,7 @@ export async function deletePost(_req, res) {
     await newPostRepository.deletePostById(postId);
     return res.status(202).send("Post deleted");
   } catch (err) {
+    console.log(`Error controller: ${err}`);
     return res.sendStatus(500);
   }
 }

@@ -12,6 +12,7 @@ export async function checkPostUser(req, res, next) {
 
     res.locals.postId = {postId};
   } catch (err) {
+    console.log(`Error middleware: ${err}`);
     return res.sendStatus(500);
   }
 

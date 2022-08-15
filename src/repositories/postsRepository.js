@@ -6,7 +6,7 @@ async function getPosts () {
     FROM users 
     JOIN posts ON posts."userId" = users.id
     ORDER BY posts.id DESC
-    LIMIT 20`
+    LIMIT 6`
     );
 };
 
@@ -20,6 +20,22 @@ async function getUserPosts (userId) {
     LIMIT 20`,
     [userId]);
 };
+
+async function getPostsByHashtags(hashtag){
+    const query = `SELECT u.id AS "userId", u.username AS username, u."pictureUrl", p.url, p.message, p.likes, p.id AS "postId"
+    FROM users u
+    JOIN posts p
+    ON p."userId" = u.id
+    JOIN "hashtagsPosts" hp
+    ON hp."postId" = p.id
+    JOIN hashtags h
+    ON hp."hashtagId" = h.id
+    WHERE p.message ILIKE $1`
+
+    const value = [`%${hashtag}%`]
+
+    return connection.query(query, value)
+}
 
 async function post (id) {
     return connection.query(`
@@ -69,6 +85,7 @@ async function usersWhoLikedThePost (postId) {
 const postsRepository = {
     getPosts,
     getUserPosts,
+    getPostsByHashtags,
     post,
     like,
     dislike,

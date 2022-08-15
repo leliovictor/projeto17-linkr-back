@@ -39,7 +39,6 @@ export async function newPost(req, res) {
       }
     }
     res.sendStatus(201);
-    return;
   } catch (error) {
     res.sendStatus(error);
   }
@@ -53,7 +52,6 @@ export async function deletePost(_req, res) {
     await newPostRepository.deletePostById(postId);
     return res.status(202).send("Post deleted");
   } catch (err) {
-    console.log(err);
     return res.sendStatus(500);
   }
 }

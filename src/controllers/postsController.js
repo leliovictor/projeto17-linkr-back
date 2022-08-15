@@ -56,6 +56,34 @@ const getUserPosts = async (req, res) => {
     };
 };
 
+const getHashtagPosts = async (req, res) => {
+	const hashtag = req.params.hashtag
+    let postsData = [];
+
+    try {
+        function savePostsData({ post, metadata, resultUsersWhoLikedThePost }) {
+			const { title, image, description } = metadata;
+			postsData.push({ ...post, urlInfo: { title, image, description }, usersWhoLiked: resultUsersWhoLikedThePost });
+		};
+
+        const { rows: result } = await postsRepository.getHashtagPosts(hashtag);
+
+		const arrayMap = result.map((post) =>
+			new Promise(async (resolve, reject) => {
+				const metadata = await urlMetadata(`${post.url}`);
+				const { rows: resultUsersWhoLikedThePost} = await postsRepository.usersWhoLikedThePost(post.postId)
+
+				resolve({ post, metadata, resultUsersWhoLikedThePost });
+			}).then(savePostsData)
+		);
+		await Promise.all(arrayMap);
+
+        res.status(200).send(postsData);
+    } catch (error) {
+        res.status(500).send(error);
+    };
+};
+
 const like = async (req, res) => {
 	const postId = req.params.post;
 	const { userId } = req.body
@@ -86,4 +114,4 @@ const dislike = async (req, res) => {
 	};
 };
 
-export { getPosts, like, dislike, getUserPosts };
+export { getPosts, like, dislike, getUserPosts, getHashtagPosts };

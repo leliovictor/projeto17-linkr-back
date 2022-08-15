@@ -22,13 +22,26 @@ async function getUserPosts(userId) {
   );
 }
 
-async function post(id) {
-  return connection.query(
-    `
-    SELECT * FROM posts WHERE id = $1`,
-    [id]
-  );
+async function getPostsByHashtags(hashtag){
+    const query = `SELECT u.id AS "userId", u.username AS username, u."pictureUrl", p.url, p.message, p.likes, p.id AS "postId"
+    FROM users u
+    JOIN posts p
+    ON p."userId" = u.id
+    JOIN "hashtagsPosts" hp
+    ON hp."postId" = p.id
+    JOIN hashtags h
+    ON hp."hashtagId" = h.id
+    WHERE p.message ILIKE $1`
+
+    const value = [`%#${hashtag}%`]
+
+    return connection.query(query,value)
 }
+
+async function post (id) {
+    return connection.query(`
+    SELECT * FROM posts WHERE id = $1`, [id])
+};
 
 async function like(likes, id) {
   return connection.query(
@@ -94,6 +107,7 @@ async function selectUserByLikeName(name) {
 const postsRepository = {
   getPosts,
   getUserPosts,
+  getPostsByHashtags,
   post,
   like,
   dislike,

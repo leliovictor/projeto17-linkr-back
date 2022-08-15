@@ -1,6 +1,6 @@
 import { newPostRepository } from "../repositories/newPostRepository.js";
 
-export async function newPost(req, res) {
+export async function newPost(_req, res) {
   const newPost = res.locals.body;
   const data = res.locals.data;
 
@@ -38,9 +38,10 @@ export async function newPost(req, res) {
         }
       }
     }
-    res.sendStatus(201);
+    return res.sendStatus(201);
   } catch (error) {
-    res.sendStatus(error);
+    console.log(error);
+    return res.sendStatus(500);
   }
 }
 

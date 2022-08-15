@@ -8,7 +8,7 @@ async function getTrendingList(req,res){
 		res.status(200).send(trendingList.rows)
 		
 	  }catch (error){
-		res.sendStatus(error)
+		res.sendStatus(500)
 	  }    
 	
 	};

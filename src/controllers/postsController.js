@@ -59,15 +59,13 @@ const getUserPosts = async (req, res) => {
 const getHashtagPosts = async (req, res) => {
 	const hashtag = req.params.hashtag
     let postsData = [];
-
     try {
         function savePostsData({ post, metadata, resultUsersWhoLikedThePost }) {
 			const { title, image, description } = metadata;
 			postsData.push({ ...post, urlInfo: { title, image, description }, usersWhoLiked: resultUsersWhoLikedThePost });
 		};
-
-        const { rows: result } = await postsRepository.getHashtagPosts(hashtag);
-
+        const { rows: result } = await postsRepository.getPostsByHashtags(hashtag);
+		console.log(result)
 		const arrayMap = result.map((post) =>
 			new Promise(async (resolve, reject) => {
 				const metadata = await urlMetadata(`${post.url}`);

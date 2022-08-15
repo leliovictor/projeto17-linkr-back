@@ -32,9 +32,9 @@ async function getPostsByHashtags(hashtag){
     ON hp."hashtagId" = h.id
     WHERE p.message ILIKE $1`
 
-    const value = [`%${hashtag}%`]
+    const value = [`%#${hashtag}%`]
 
-    return connection.query(query, value)
+    return connection.query(query,value)
 }
 
 async function post (id) {

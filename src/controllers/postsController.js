@@ -133,9 +133,21 @@ const postSearchUser = async (_req, res) => {
 
     return res.status(200).send(usernames);
   } catch (err) {
-    console.log(err);
     return res.sendStatus(500);
   }
 };
 
-export { getPosts, like, dislike, getUserPosts, postSearchUser, getHashtagPosts };
+const editPost = async (req, res) => {
+  const editMessage = req.body;
+  const postId = req.params.post;
+
+  try {
+    await postsRepository.editMessage(editMessage.message, postId);
+
+    return res.sendStatus(202);
+  } catch (error) {
+    return res.sendStatus(500);
+  };
+};
+
+export { getPosts, like, dislike, getUserPosts, postSearchUser, getHashtagPosts, editPost };

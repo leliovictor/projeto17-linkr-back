@@ -28,8 +28,8 @@ const getPosts = async (req, res) => {
     await Promise.all(arrayMap);
 
     postsData.sort((a, b) => b.postId - a.postId);
-
     return res.status(200).send(postsData);
+    
   } catch (error) {
     return res.status(500).send(error);
   }

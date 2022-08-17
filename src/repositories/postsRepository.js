@@ -84,9 +84,9 @@ async function usersWhoLikedThePost(postId) {
   return connection.query(
     `
     SELECT users.username
-	FROM users
-	JOIN "postsUsers-likes" ON "postsUsers-likes"."userId" = users.id
-	WHERE "postsUsers-likes"."postId" = $1`,
+    FROM users
+    JOIN "postsUsers-likes" ON "postsUsers-likes"."userId" = users.id
+    WHERE "postsUsers-likes"."postId" = $1`,
     [postId]
   );
 }
@@ -104,6 +104,16 @@ async function selectUserByLikeName(name) {
   return connection.query(query, value);
 }
 
+async function editMessage(message, postId) {
+  return connection.query(
+    `
+    UPDATE posts
+    SET message = $1
+    WHERE id = $2`,
+    [message, postId]
+  );
+}
+
 const postsRepository = {
   getPosts,
   getUserPosts,
@@ -115,6 +125,7 @@ const postsRepository = {
   deleteLiker,
   usersWhoLikedThePost,
   selectUserByLikeName,
+  editMessage
 };
 
 export default postsRepository;

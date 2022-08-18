@@ -29,8 +29,13 @@ const getPosts = async (_req, res) => {
     await Promise.all(arrayMap);
 
     postsData.sort((a, b) => b.postId - a.postId);
+<<<<<<< HEAD
 
     return res.status(200).send({ posts: postsData, followCount });
+=======
+    return res.status(200).send(postsData);
+    
+>>>>>>> 081d4dd6ca5225ad0b5f7d62ed690cd9641b85d2
   } catch (error) {
     return res.status(500).send(error);
   }
@@ -140,7 +145,6 @@ const postSearchUser = async (_req, res) => {
 
     return res.status(200).send(usernames);
   } catch (err) {
-    console.log(err);
     return res.sendStatus(500);
   }
 };
@@ -166,6 +170,19 @@ const postFollow = async (_req, res) => {
   return res.sendStatus(200);
 };
 
+const editPost = async (req, res) => {
+  const editMessage = req.body;
+  const postId = req.params.post;
+
+  try {
+    await postsRepository.editMessage(editMessage.message, postId);
+
+    return res.sendStatus(202);
+  } catch (error) {
+    return res.sendStatus(500);
+  };
+};
+
 export {
   getPosts,
   like,
@@ -175,4 +192,8 @@ export {
   getHashtagPosts,
   checkFollow,
   postFollow,
+  editPost
 };
+
+
+

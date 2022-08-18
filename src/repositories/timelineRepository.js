@@ -9,8 +9,17 @@ async function getTredingHashtags(){
     return connection.query(query)
 }
 
-const timelineRepository = {
-    getTredingHashtags
+async function countUserFollowing(id) {
+    const query = `
+    SELECT COUNT(request) FROM followers WHERE request=$1 GROUP BY request
+    `;
+    const value = [id];
+
+    return connection.query(query, value);
 }
 
-export default timelineRepository;
+export const timelineRepository = {
+    getTredingHashtags,
+    countUserFollowing,
+}
+

@@ -27,7 +27,6 @@ CREATE TABLE "posts" (
 
 CREATE TABLE "hashtagsPosts" (
 	"id" serial NOT NULL,
-	"url" varchar NOT NULL,
 	"hashtagId" integer NOT NULL,
 	"postId" integer NOT NULL,
 	CONSTRAINT "hashtagsPosts_pk" PRIMARY KEY ("id")

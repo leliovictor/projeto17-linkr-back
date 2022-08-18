@@ -1,9 +1,10 @@
 import postsRepository from "../repositories/postsRepository.js";
 import urlMetadata from "url-metadata";
 
-const getPosts = async (req, res) => {
+const getPosts = async (_req, res) => {
   let postsData = [];
-
+  const { id } = res.locals.data;
+  const { followCount } = res.locals;
   try {
     function savePostsData({ post, metadata, resultUsersWhoLikedThePost }) {
       const { title, image, description } = metadata;
@@ -14,7 +15,7 @@ const getPosts = async (req, res) => {
       });
     }
 
-    const { rows: result } = await postsRepository.getPosts();
+    const { rows: result } = await postsRepository.getPosts(id);
 
     const arrayMap = result.map((post) =>
       new Promise(async (resolve, reject) => {
@@ -28,8 +29,8 @@ const getPosts = async (req, res) => {
     await Promise.all(arrayMap);
 
     postsData.sort((a, b) => b.postId - a.postId);
-    return res.status(200).send(postsData);
-    
+    return res.status(200).send({ posts: postsData, followCount });
+
   } catch (error) {
     return res.status(500).send(error);
   }
@@ -38,6 +39,7 @@ const getPosts = async (req, res) => {
 const getUserPosts = async (req, res) => {
   const userId = req.params.id;
   let userPostsData = [];
+  const followStatus = res.locals.follow;
 
   try {
     function saveUserPostsData({ post, metadata, resultUsersWhoLikedThePost }) {
@@ -69,28 +71,33 @@ const getUserPosts = async (req, res) => {
 };
 
 const getHashtagPosts = async (req, res) => {
-	const hashtag = req.params.hashtag
-    let postsData = [];
-    try {
-        function savePostsData({ post, metadata, resultUsersWhoLikedThePost }) {
-			const { title, image, description } = metadata;
-			postsData.push({ ...post, urlInfo: { title, image, description }, usersWhoLiked: resultUsersWhoLikedThePost });
-		};
-        const { rows: result } = await postsRepository.getPostsByHashtags(hashtag);
-		const arrayMap = result.map((post) =>
-			new Promise(async (resolve, reject) => {
-				const metadata = await urlMetadata(`${post.url}`);
-				const { rows: resultUsersWhoLikedThePost} = await postsRepository.usersWhoLikedThePost(post.postId)
+  const hashtag = req.params.hashtag;
+  let postsData = [];
+  try {
+    function savePostsData({ post, metadata, resultUsersWhoLikedThePost }) {
+      const { title, image, description } = metadata;
+      postsData.push({
+        ...post,
+        urlInfo: { title, image, description },
+        usersWhoLiked: resultUsersWhoLikedThePost,
+      });
+    }
+    const { rows: result } = await postsRepository.getPostsByHashtags(hashtag);
+    const arrayMap = result.map((post) =>
+      new Promise(async (resolve, reject) => {
+        const metadata = await urlMetadata(`${post.url}`);
+        const { rows: resultUsersWhoLikedThePost } =
+          await postsRepository.usersWhoLikedThePost(post.postId);
 
-				resolve({ post, metadata, resultUsersWhoLikedThePost });
-			}).then(savePostsData)
-		);
-		await Promise.all(arrayMap);
+        resolve({ post, metadata, resultUsersWhoLikedThePost });
+      }).then(savePostsData)
+    );
+    await Promise.all(arrayMap);
 
-        res.status(200).send(postsData);
-    } catch (error) {
-        res.status(500).send(error);
-    };
+    res.status(200).send(postsData);
+  } catch (error) {
+    res.status(500).send(error);
+  }
 };
 
 const like = async (req, res) => {
@@ -125,16 +132,39 @@ const dislike = async (req, res) => {
 
 const postSearchUser = async (_req, res) => {
   const { username } = res.locals.body;
+  const {id} = res.locals.data;
 
   try {
     const { rows: usernames } = await postsRepository.selectUserByLikeName(
-      username
+      username, id
     );
 
     return res.status(200).send(usernames);
   } catch (err) {
     return res.sendStatus(500);
   }
+};
+
+
+const checkFollow = async (req, res) => {
+  const { id: userId } = res.locals.data;
+  const { followId } = req.params;
+
+  try {
+    const { rowCount: following } = await postsRepository.selectUserFollow(
+      userId,
+      followId
+    );
+
+    return following ? res.status(200).send(true) : res.status(200).send(false);
+  } catch (err) {
+    console.log(err);
+    return res.sendStatus(500);
+  }
+};
+
+const postFollow = async (_req, res) => {
+  return res.sendStatus(200);
 };
 
 const editPost = async (req, res) => {
@@ -150,4 +180,19 @@ const editPost = async (req, res) => {
   };
 };
 
-export { getPosts, like, dislike, getUserPosts, postSearchUser, getHashtagPosts, editPost };
+export {
+  getPosts,
+  like,
+  dislike,
+  getUserPosts,
+  postSearchUser,
+  getHashtagPosts,
+  checkFollow,
+  postFollow,
+  editPost
+};
+
+
+
+export { getPosts, like, dislike, getUserPosts, postSearchUser, getHashtagPosts,  };
+

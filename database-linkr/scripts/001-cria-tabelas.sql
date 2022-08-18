@@ -72,7 +72,7 @@ CREATE TABLE "comments" (
 	"id" serial NOT NULL,
 	"postId" integer NOT NULL,
 	"userId" integer NOT NULL,
-	"text" varchar(255) NOT NULL,
+	"text" integer NOT NULL,
 	CONSTRAINT "comments_pk" PRIMARY KEY ("id")
 ) WITH (
   OIDS=FALSE

@@ -141,7 +141,6 @@ const postSearchUser = async (_req, res) => {
 
     return res.status(200).send(usernames);
   } catch (err) {
-    console.log(err);
     return res.sendStatus(500);
   }
 };
@@ -167,6 +166,19 @@ const postFollow = async (_req, res) => {
   return res.sendStatus(200);
 };
 
+const editPost = async (req, res) => {
+  const editMessage = req.body;
+  const postId = req.params.post;
+
+  try {
+    await postsRepository.editMessage(editMessage.message, postId);
+
+    return res.sendStatus(202);
+  } catch (error) {
+    return res.sendStatus(500);
+  };
+};
+
 export {
   getPosts,
   like,
@@ -176,4 +188,8 @@ export {
   getHashtagPosts,
   checkFollow,
   postFollow,
+  editPost
 };
+
+
+

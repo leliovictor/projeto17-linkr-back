@@ -29,13 +29,8 @@ const getPosts = async (_req, res) => {
     await Promise.all(arrayMap);
 
     postsData.sort((a, b) => b.postId - a.postId);
-<<<<<<< HEAD
 
     return res.status(200).send({ posts: postsData, followCount });
-=======
-    return res.status(200).send(postsData);
-    
->>>>>>> 081d4dd6ca5225ad0b5f7d62ed690cd9641b85d2
   } catch (error) {
     return res.status(500).send(error);
   }

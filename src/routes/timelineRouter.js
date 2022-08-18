@@ -1,12 +1,7 @@
 import { Router } from "express";
 
-import { countFollowing } from "../middlewares/timelineMiddleware.js";
-import {
-  getPosts,
-  like,
-  dislike,
-  editPost,
-} from "../controllers/postsController.js";
+import {countFollowing} from "../middlewares/timelineMiddleware.js";
+import { getPosts, like, dislike, editPost } from "../controllers/postsController.js"
 import { checkAuthentication } from "../middlewares/token.middleware.js";
 
 const timelineRouter = Router();

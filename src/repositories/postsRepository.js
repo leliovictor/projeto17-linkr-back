@@ -156,7 +156,7 @@ async function editMessage(message, postId) {
   );
 }
 
-const postsRepository = {
+export const postsRepository = {
   getPosts,
   getUserPosts,
   getPostsByHashtags,
@@ -167,10 +167,8 @@ const postsRepository = {
   deleteLiker,
   usersWhoLikedThePost,
   selectUserByLikeName,
-  editMessage,
   selectUserFollow,
   deleteUserFollow,
   insertUserFollow,
+  editMessage
 };
-
-export default postsRepository;

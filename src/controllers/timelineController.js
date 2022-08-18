@@ -1,10 +1,9 @@
 import { timelineRepository } from "../repositories/timelineRepository.js";
 
 export async function getTrendingList(_req, res) {
-	try{
+  try {
+    const trendingList = await timelineRepository.getTredingHashtags();
 
-		const trendingList = await timelineRepository.getTredingHashtags();
-		
 		return res.status(200).send(trendingList.rows);
 		
 	} catch (error){

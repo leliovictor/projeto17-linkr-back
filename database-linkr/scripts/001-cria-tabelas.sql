@@ -72,7 +72,7 @@ CREATE TABLE "comments" (
 	"id" serial NOT NULL,
 	"postId" integer NOT NULL,
 	"userId" integer NOT NULL,
-	"text" integer NOT NULL,
+	"text" varchar(255) NOT NULL,
 	CONSTRAINT "comments_pk" PRIMARY KEY ("id")
 ) WITH (
   OIDS=FALSE
@@ -107,7 +107,6 @@ ALTER TABLE "followers" ADD CONSTRAINT "followers_fk1" FOREIGN KEY ("requested")
 
 ALTER TABLE "comments" ADD CONSTRAINT "comments_fk0" FOREIGN KEY ("postId") REFERENCES "posts"("id");
 ALTER TABLE "comments" ADD CONSTRAINT "comments_fk1" FOREIGN KEY ("userId") REFERENCES "users"("id");
-ALTER TABLE "comments" ADD CONSTRAINT "comments_fk2" FOREIGN KEY ("text") REFERENCES "users"("id");
 
 ALTER TABLE "reposts" ADD CONSTRAINT "reposts_fk0" FOREIGN KEY ("userId") REFERENCES "users"("id");
 ALTER TABLE "reposts" ADD CONSTRAINT "reposts_fk1" FOREIGN KEY ("postId") REFERENCES "posts"("id");

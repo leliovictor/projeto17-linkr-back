@@ -1,4 +1,4 @@
-import postsRepository from "../repositories/postsRepository.js";
+import { postsRepository } from "../repositories/postsRepository.js";
 
 export async function deleteOrFollow(_req, res, next) {
   const { id: userId } = res.locals.data;

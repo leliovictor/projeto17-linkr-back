@@ -1,4 +1,4 @@
-import postsRepository from "../repositories/postsRepository.js";
+import { postsRepository } from "../repositories/postsRepository.js";
 import urlMetadata from "url-metadata";
 
 const getPosts = async (_req, res) => {
@@ -132,11 +132,12 @@ const dislike = async (req, res) => {
 
 const postSearchUser = async (_req, res) => {
   const { username } = res.locals.body;
-  const {id} = res.locals.data;
+  const { id } = res.locals.data;
 
   try {
     const { rows: usernames } = await postsRepository.selectUserByLikeName(
-      username, id
+      username,
+      id
     );
 
     return res.status(200).send(usernames);
@@ -176,7 +177,7 @@ const editPost = async (req, res) => {
     return res.sendStatus(202);
   } catch (error) {
     return res.sendStatus(500);
-  };
+  }
 };
 
 export {
@@ -188,8 +189,5 @@ export {
   getHashtagPosts,
   checkFollow,
   postFollow,
-  editPost
+  editPost,
 };
-
-
-

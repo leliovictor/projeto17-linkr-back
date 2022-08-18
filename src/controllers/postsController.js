@@ -3,6 +3,7 @@ import urlMetadata from "url-metadata";
 
 const getPosts = async (req, res) => {
   let postsData = [];
+  console.log("entrou dentro do getPosts")
 
   try {
     function savePostsData({ post, metadata, resultUsersWhoLikedThePost }) {
@@ -26,6 +27,7 @@ const getPosts = async (req, res) => {
       }).then(savePostsData)
     );
     await Promise.all(arrayMap);
+    console.log("depois")
 
     postsData.sort((a, b) => b.postId - a.postId);
     return res.status(200).send(postsData);
@@ -62,6 +64,7 @@ const getUserPosts = async (req, res) => {
     );
     await Promise.all(arrayMap);
 
+    userPostsData.sort((a, b) => b.postId - a.postId);
     return res.status(200).send(userPostsData);
   } catch (error) {
     return res.status(500).send(error);
@@ -150,4 +153,16 @@ const editPost = async (req, res) => {
   };
 };
 
-export { getPosts, like, dislike, getUserPosts, postSearchUser, getHashtagPosts, editPost };
+const teste = async (req, res) => {
+  try {
+    console.log("entro")
+    const {rows: dataTeste} = await postsRepository.teste();
+
+    return res.status(200).send(dataTeste)
+  } catch (error) {
+    console.log("error: ", error)
+    return res.sendStatus(500);
+  }
+}
+
+export { getPosts, like, dislike, getUserPosts, postSearchUser, getHashtagPosts, editPost, teste };

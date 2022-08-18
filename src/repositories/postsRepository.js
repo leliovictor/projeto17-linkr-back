@@ -114,6 +114,32 @@ async function editMessage(message, postId) {
   );
 }
 
+async function teste() {
+  return connection.query(`
+  SELECT 
+  users.username,
+  users."pictureUrl",
+  posts.url,
+  posts.message,
+  posts."userId",
+  posts.likes,
+  posts.id AS "postId",
+  ARRAY(
+      SELECT JSON_BUILD_OBJECT('username',users.username)
+      FROM users 
+      JOIN "postsUsers-likes" ON users.id = "postsUsers-likes"."userId"
+      WHERE "postsUsers-likes"."postId"= posts.id
+  ) AS "usersWhoLiked"
+  FROM users
+  JOIN posts
+  ON posts."userId" = users.id
+  JOIN "postsUsers-likes"
+  ON "postsUsers-likes"."postId" = posts.id
+  GROUP BY users.username, users."pictureUrl", posts.url, posts.message, posts."userId", posts.likes, posts.id
+  ORDER BY posts.id DESC
+  LIMIT 20`);
+}
+
 const postsRepository = {
   getPosts,
   getUserPosts,
@@ -125,7 +151,8 @@ const postsRepository = {
   deleteLiker,
   usersWhoLikedThePost,
   selectUserByLikeName,
-  editMessage
+  editMessage,
+  teste
 };
 
 export default postsRepository;

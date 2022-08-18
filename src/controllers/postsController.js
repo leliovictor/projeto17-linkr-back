@@ -132,10 +132,11 @@ const dislike = async (req, res) => {
 
 const postSearchUser = async (_req, res) => {
   const { username } = res.locals.body;
+  const {id} = res.locals.data;
 
   try {
     const { rows: usernames } = await postsRepository.selectUserByLikeName(
-      username
+      username, id
     );
 
     return res.status(200).send(usernames);

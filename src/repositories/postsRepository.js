@@ -101,15 +101,16 @@ async function usersWhoLikedThePost(postId) {
   );
 }
 
-async function selectUserByLikeName(name) {
+async function selectUserByLikeName(name, id) {
   const query = `
-    SELECT id, username, "pictureUrl" 
-    FROM users 
-    WHERE username LIKE $1
-    ORDER BY username ASC
+  SELECT u.id, u.username, u."pictureUrl", f.request AS following
+  FROM users u 
+  LEFT JOIN followers f ON u.id = f.requested
+  WHERE username LIKE $1
+  ORDER BY CASE WHEN f.request = $2 THEN 0 ELSE 1 END, u.username ASC
     `;
 
-  const value = [`${name}%`];
+  const value = [`${name}%`, id];
 
   return connection.query(query, value);
 }

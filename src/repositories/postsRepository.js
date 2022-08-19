@@ -129,7 +129,16 @@ async function teste() {
       FROM users 
       JOIN "postsUsers-likes" ON users.id = "postsUsers-likes"."userId"
       WHERE "postsUsers-likes"."postId"= posts.id
-  ) AS "usersWhoLiked"
+  ) AS "usersWhoLiked",
+  ARRAY(
+    SELECT
+      JSON_BUILD_OBJECT('pictureUrl',users."pictureUrl"),
+      JSON_BUILD_OBJECT('username',users.username),
+      JSON_BUILD_OBJECT('text',comments.text)
+    FROM users
+    JOIN comments ON comments."userId" = users.id
+    WHERE comments."postId" = posts.id
+  ) AS "usersWhoCommented"
   FROM users
   JOIN posts
   ON posts."userId" = users.id
@@ -138,7 +147,23 @@ async function teste() {
   GROUP BY users.username, users."pictureUrl", posts.url, posts.message, posts."userId", posts.likes, posts.id
   ORDER BY posts.id DESC
   LIMIT 20`);
-}
+};
+
+async function insertMessage (postId, userId, text) {
+  return connection.query(`
+  INSERT INTO comments ("postId", "userId", "text")
+  VALUES ($1, $2, $3)`,
+  [postId, userId, text]);
+};
+
+async function usersWhoCommentedThePost (postId) {
+  return connection.query(`
+  SELECT users.username, users."pictureUrl", comments.text
+  FROM users
+  JOIN comments ON comments."userId" = users.id
+  WHERE comments."postId" = $1`,
+  [postId])
+};
 
 const postsRepository = {
   getPosts,
@@ -152,7 +177,9 @@ const postsRepository = {
   usersWhoLikedThePost,
   selectUserByLikeName,
   editMessage,
-  teste
+  teste,
+  insertMessage,
+  usersWhoCommentedThePost
 };
 
 export default postsRepository;

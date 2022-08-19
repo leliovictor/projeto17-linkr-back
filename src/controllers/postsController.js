@@ -6,11 +6,12 @@ const getPosts = async (req, res) => {
   console.log("entrou dentro do getPosts")
 
   try {
+  /*
     function savePostsData({ post, metadata, resultUsersWhoLikedThePost }) {
       const { title, image, description } = metadata;
       postsData.push({
         ...post,
-        urlInfo: { title, image, description },
+        urlInfo: {title, image, description},
         usersWhoLiked: resultUsersWhoLikedThePost,
       });
     }
@@ -22,17 +23,43 @@ const getPosts = async (req, res) => {
         const metadata = await urlMetadata(`${post.url}`);
         const { rows: resultUsersWhoLikedThePost } =
           await postsRepository.usersWhoLikedThePost(post.postId);
-
+        console.log("metadata: ", metadata)
         resolve({ post, metadata, resultUsersWhoLikedThePost });
       }).then(savePostsData)
     );
     await Promise.all(arrayMap);
-    console.log("depois")
+    console.log("depois");
+
+    */
+    const { rows: result } = await postsRepository.getPosts();
+
+    function savePostsData(post, metadata, resultUsersWhoLikedThePost, resultUsersWhoCommentedThePost) {
+			const { title, image, description } = metadata;
+			postsData.push({
+        ...post, 
+        urlInfo: { title, image, description },
+        usersWhoLiked: resultUsersWhoLikedThePost,
+        usersWhoCommented: resultUsersWhoCommentedThePost
+      });
+		}
+
+		const arrayMap = result.map((post) =>
+			urlMetadata(`${post.url}`)
+        .then( async (metadata) => {
+          const { rows: resultUsersWhoLikedThePost } = await postsRepository.usersWhoLikedThePost(post.postId);
+          const { rows: resultUsersWhoCommentedThePost } = await postsRepository.usersWhoCommentedThePost(post.postId);
+          savePostsData(post, metadata, resultUsersWhoLikedThePost, resultUsersWhoCommentedThePost);
+        })
+        .catch((error) => console.log(error))
+		);
+
+		await Promise.all(arrayMap);
 
     postsData.sort((a, b) => b.postId - a.postId);
+
     return res.status(200).send(postsData);
-    
   } catch (error) {
+    console.log(error)
     return res.status(500).send(error);
   }
 };
@@ -163,6 +190,19 @@ const teste = async (req, res) => {
     console.log("error: ", error)
     return res.sendStatus(500);
   }
+};
+
+const insertMessage = async (req, res) => {
+  const postId = req.params.post;
+  const message = req.body;
+
+  try {
+    await postsRepository.insertMessage(postId, message.ownerOfThePost, message.comment);
+
+    return res.sendStatus(202);
+  } catch (error) {
+    return res.sendStatus(500);
+  }
 }
 
-export { getPosts, like, dislike, getUserPosts, postSearchUser, getHashtagPosts, editPost, teste };
+export { getPosts, like, dislike, getUserPosts, postSearchUser, getHashtagPosts, editPost, teste, insertMessage };

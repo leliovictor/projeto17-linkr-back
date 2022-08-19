@@ -1,15 +1,15 @@
 import connection from "../config/db.js";
 
-async function getPosts() {
+async function getPosts(limit) {
   return connection.query(`
     SELECT  users.username, users."pictureUrl", posts.url, posts.message, posts."userId", posts.likes, posts.id AS "postId"
     FROM users 
     JOIN posts ON posts."userId" = users.id
-    ORDER BY posts.id DESC
-    LIMIT 20`);
+    ORDER BY posts.id DESC LIMIT $1
+    `, [limit]);
 }
 
-async function getUserPosts(userId) {
+async function getUserPosts(userId, limit) {
   return connection.query(
     `
     SELECT  users.username, users."pictureUrl", posts.url, posts.message, posts."userId", posts.likes, posts.id AS "postId"
@@ -17,12 +17,12 @@ async function getUserPosts(userId) {
     JOIN posts ON posts."userId" = users.id
     WHERE users.id = $1
     ORDER BY posts.id DESC
-    LIMIT 20`,
-    [userId]
+    LIMIT $2`,
+    [userId, limit]
   );
 }
 
-async function getPostsByHashtags(hashtag){
+async function getPostsByHashtags(hashtag, limit){
     const query = `SELECT u.id AS "userId", u.username AS username, u."pictureUrl", p.url, p.message, p.likes, p.id AS "postId"
     FROM users u
     JOIN posts p
@@ -31,11 +31,12 @@ async function getPostsByHashtags(hashtag){
     ON hp."postId" = p.id
     JOIN hashtags h
     ON hp."hashtagId" = h.id
-    WHERE p.message ILIKE $1`
+    WHERE p.message ILIKE $1
+    LIMIT $2`
 
-    const value = [`%#${hashtag}%`]
+    const values = [`%#${hashtag}%`, limit]
 
-    return connection.query(query,value)
+    return connection.query(query,values)
 }
 
 async function post (id) {

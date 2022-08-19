@@ -5,16 +5,25 @@ const getPosts = async (req, res) => {
   let postsData = [];
 
   try {
-    function savePostsData({ post, metadata, resultUsersWhoLikedThePost }) {
-      const { title, image, description } = metadata;
-      postsData.push({
-        ...post,
-        urlInfo: { title, image, description },
-        usersWhoLiked: resultUsersWhoLikedThePost,
-      });
-    }
+    const page = req.query.page;
+    const limit = 10;
+    const end = page * limit;
 
-    const { rows: result } = await postsRepository.getPosts();
+    function savePostsData({ post, metadata, resultUsersWhoLikedThePost }) {
+          const { title, image, description } = metadata;
+          postsData.push({
+            ...post,
+            urlInfo: { title, image, description },
+            usersWhoLiked: resultUsersWhoLikedThePost,
+          });
+        }
+
+    if (page && page < 1) {
+      response.status(400).send("Informe uma página válida!");
+      return;
+    }  
+
+    const { rows: result } = await postsRepository.getPosts(end);
 
     const arrayMap = result.map((post) =>
       new Promise(async (resolve, reject) => {
@@ -40,6 +49,10 @@ const getUserPosts = async (req, res) => {
   let userPostsData = [];
 
   try {
+    const page = req.query.page;
+    const limit = 10;
+    const end = page * limit;
+
     function saveUserPostsData({ post, metadata, resultUsersWhoLikedThePost }) {
       const { title, image, description } = metadata;
       userPostsData.push({
@@ -49,7 +62,12 @@ const getUserPosts = async (req, res) => {
       });
     }
 
-    const { rows: result } = await postsRepository.getUserPosts(userId);
+    if (page && page < 1) {
+      response.status(400).send("Informe uma página válida!");
+      return;
+    }  
+
+    const { rows: result } = await postsRepository.getUserPosts(userId, end);
 
     const arrayMap = result.map((post) =>
       new Promise(async (resolve, reject) => {
@@ -71,16 +89,22 @@ const getUserPosts = async (req, res) => {
 const getHashtagPosts = async (req, res) => {
 	const hashtag = req.params.hashtag
     let postsData = [];
+    
     try {
-        function savePostsData({ post, metadata, resultUsersWhoLikedThePost }) {
+      const page = req.query.page;
+      const limit = 10;
+      const end = page * limit;
+
+      function savePostsData({ post, metadata, resultUsersWhoLikedThePost }) {
 			const { title, image, description } = metadata;
 			postsData.push({ ...post, urlInfo: { title, image, description }, usersWhoLiked: resultUsersWhoLikedThePost });
-		};
-        const { rows: result } = await postsRepository.getPostsByHashtags(hashtag);
-		const arrayMap = result.map((post) =>
-			new Promise(async (resolve, reject) => {
-				const metadata = await urlMetadata(`${post.url}`);
-				const { rows: resultUsersWhoLikedThePost} = await postsRepository.usersWhoLikedThePost(post.postId)
+		  };
+      
+      const { rows: result } = await postsRepository.getPostsByHashtags(hashtag, end);
+      const arrayMap = result.map((post) =>
+        new Promise(async (resolve, reject) => {
+          const metadata = await urlMetadata(`${post.url}`);
+          const { rows: resultUsersWhoLikedThePost} = await postsRepository.usersWhoLikedThePost(post.postId)
 
 				resolve({ post, metadata, resultUsersWhoLikedThePost });
 			}).then(savePostsData)

@@ -5,8 +5,11 @@ const getPosts = async (_req, res) => {
   let postsData = [];
   const { id } = res.locals.data;
   const { followCount } = res.locals;
+  const page = _req.query.page;
+  const limit = 10;
+  const end = (page-1) * limit;
   try {
-    const { rows: result } = await postsRepository.getPosts(id);
+    const { rows: result } = await postsRepository.getPosts(id, end);
 
     function savePostsData(post, metadata, resultUsersWhoLikedThePost, resultUsersWhoCommentedThePost) {
 			const { title, image, description } = metadata;
@@ -42,9 +45,12 @@ const getUserPosts = async (req, res) => {
   const userId = req.params.id;
   let userPostsData = [];
   const followStatus = res.locals.follow;
+  const page = req.query.page;
+  const limit = 10;
+  const end = (page-1) * limit;
 
   try {
-    const { rows: result } = await postsRepository.getUserPosts(userId);
+    const { rows: result } = await postsRepository.getUserPosts(userId, end);
 
     function savePostsData(post, metadata, resultUsersWhoLikedThePost, resultUsersWhoCommentedThePost) {
 			const { title, image, description } = metadata;
@@ -79,9 +85,12 @@ const getUserPosts = async (req, res) => {
 const getHashtagPosts = async (req, res) => {
 	  const hashtag = req.params.hashtag
     let postsData = [];
+    const page = req.query.page;
+    const limit = 10;
+    const end = (page-1) * limit;
 
     try {
-      const { rows: result } = await postsRepository.getPostsByHashtags(hashtag);
+      const { rows: result } = await postsRepository.getPostsByHashtags(hashtag, end);
 
       function savePostsData(post, metadata, resultUsersWhoLikedThePost, resultUsersWhoCommentedThePost) {
         const { title, image, description } = metadata;

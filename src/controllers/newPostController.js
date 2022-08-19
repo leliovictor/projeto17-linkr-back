@@ -55,7 +55,9 @@ export async function deletePost(_req, res) {
     //middleware
     const res2 = await newPostRepository.deletePostFromPostLikes(postId);
 
-    if (res1 && res2) await newPostRepository.deletePostById(postId);
+    const res3 = await newPostRepository.deletePostFromComments(postId);
+
+    if (res1 && res2 && res3) await newPostRepository.deletePostById(postId);
     return res.status(202).send("Post deleted");
   } catch (err) {
     console.log(`Error controller: ${err}`);

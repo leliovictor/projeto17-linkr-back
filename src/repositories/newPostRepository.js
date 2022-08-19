@@ -72,6 +72,12 @@ async function deletePostFromPostLikes(postId) {
   return connection.query(query, value);
 }
 
+async function deletePostFromComments(postId) {
+  const query = `DELETE FROM comments WHERE "postId"=$1`;
+  const value = [postId];
+  return connection.query(query, value);
+}
+
 export const newPostRepository = {
   getHashtags,
   getHashtagsByName,
@@ -83,4 +89,5 @@ export const newPostRepository = {
   deletePostFromHashtagsPosts,
   deletePostById,
   deletePostFromPostLikes,
+  deletePostFromComments
 };

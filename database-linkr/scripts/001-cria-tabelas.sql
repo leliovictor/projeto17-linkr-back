@@ -66,8 +66,6 @@ CREATE TABLE "followers" (
   OIDS=FALSE
 );
 
-
-
 CREATE TABLE "comments" (
 	"id" serial NOT NULL,
 	"postId" integer NOT NULL,
@@ -77,20 +75,6 @@ CREATE TABLE "comments" (
 ) WITH (
   OIDS=FALSE
 );
-
-
-
-CREATE TABLE "reposts" (
-	"id" serial NOT NULL,
-	"userId" serial NOT NULL,
-	"postId" integer NOT NULL,
-	"createAt" TIMESTAMP NOT NULL DEFAULT 'now ()',
-	CONSTRAINT "reposts_pk" PRIMARY KEY ("id")
-) WITH (
-  OIDS=FALSE
-);
-
-
 
 
 ALTER TABLE "posts" ADD CONSTRAINT "posts_fk0" FOREIGN KEY ("userId") REFERENCES "users"("id");
@@ -107,16 +91,4 @@ ALTER TABLE "followers" ADD CONSTRAINT "followers_fk1" FOREIGN KEY ("requested")
 
 ALTER TABLE "comments" ADD CONSTRAINT "comments_fk0" FOREIGN KEY ("postId") REFERENCES "posts"("id");
 ALTER TABLE "comments" ADD CONSTRAINT "comments_fk1" FOREIGN KEY ("userId") REFERENCES "users"("id");
-ALTER TABLE "comments" ADD CONSTRAINT "comments_fk2" FOREIGN KEY ("text") REFERENCES "users"("id");
-
-ALTER TABLE "reposts" ADD CONSTRAINT "reposts_fk0" FOREIGN KEY ("userId") REFERENCES "users"("id");
-ALTER TABLE "reposts" ADD CONSTRAINT "reposts_fk1" FOREIGN KEY ("postId") REFERENCES "posts"("id");
-
-
-
-
-
-
-
-
 

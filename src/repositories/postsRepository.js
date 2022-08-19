@@ -156,6 +156,22 @@ async function editMessage(message, postId) {
   );
 }
 
+async function insertMessage (postId, userId, text) {
+  return connection.query(`
+  INSERT INTO comments ("postId", "userId", "text")
+  VALUES ($1, $2, $3)`,
+  [postId, userId, text]);
+};
+
+async function usersWhoCommentedThePost (postId) {
+  return connection.query(`
+  SELECT users.id AS "userId", users.username, users."pictureUrl", comments.text
+  FROM comments
+  JOIN users ON users.id = comments."userId"
+  WHERE comments."postId" = $1`,
+  [postId])
+};
+
 export const postsRepository = {
   getPosts,
   getUserPosts,
@@ -167,8 +183,10 @@ export const postsRepository = {
   deleteLiker,
   usersWhoLikedThePost,
   selectUserByLikeName,
+  editMessage,
+  insertMessage,
+  usersWhoCommentedThePost,
   selectUserFollow,
   deleteUserFollow,
   insertUserFollow,
-  editMessage
 };

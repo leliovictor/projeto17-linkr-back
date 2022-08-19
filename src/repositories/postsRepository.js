@@ -158,9 +158,9 @@ async function insertMessage (postId, userId, text) {
 
 async function usersWhoCommentedThePost (postId) {
   return connection.query(`
-  SELECT users.username, users."pictureUrl", comments.text
-  FROM users
-  JOIN comments ON comments."userId" = users.id
+  SELECT users.id AS "userId", users.username, users."pictureUrl", comments.text
+  FROM comments
+  JOIN users ON users.id = comments."userId"
   WHERE comments."postId" = $1`,
   [postId])
 };
@@ -177,7 +177,6 @@ const postsRepository = {
   usersWhoLikedThePost,
   selectUserByLikeName,
   editMessage,
-  teste,
   insertMessage,
   usersWhoCommentedThePost
 };

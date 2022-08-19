@@ -3,34 +3,8 @@ import urlMetadata from "url-metadata";
 
 const getPosts = async (req, res) => {
   let postsData = [];
-  console.log("entrou dentro do getPosts")
 
   try {
-  /*
-    function savePostsData({ post, metadata, resultUsersWhoLikedThePost }) {
-      const { title, image, description } = metadata;
-      postsData.push({
-        ...post,
-        urlInfo: {title, image, description},
-        usersWhoLiked: resultUsersWhoLikedThePost,
-      });
-    }
-
-    const { rows: result } = await postsRepository.getPosts();
-
-    const arrayMap = result.map((post) =>
-      new Promise(async (resolve, reject) => {
-        const metadata = await urlMetadata(`${post.url}`);
-        const { rows: resultUsersWhoLikedThePost } =
-          await postsRepository.usersWhoLikedThePost(post.postId);
-        console.log("metadata: ", metadata)
-        resolve({ post, metadata, resultUsersWhoLikedThePost });
-      }).then(savePostsData)
-    );
-    await Promise.all(arrayMap);
-    console.log("depois");
-
-    */
     const { rows: result } = await postsRepository.getPosts();
 
     function savePostsData(post, metadata, resultUsersWhoLikedThePost, resultUsersWhoCommentedThePost) {
@@ -41,7 +15,7 @@ const getPosts = async (req, res) => {
         usersWhoLiked: resultUsersWhoLikedThePost,
         usersWhoCommented: resultUsersWhoCommentedThePost
       });
-		}
+		};
 
 		const arrayMap = result.map((post) =>
 			urlMetadata(`${post.url}`)
@@ -69,29 +43,32 @@ const getUserPosts = async (req, res) => {
   let userPostsData = [];
 
   try {
-    function saveUserPostsData({ post, metadata, resultUsersWhoLikedThePost }) {
-      const { title, image, description } = metadata;
-      userPostsData.push({
-        ...post,
-        urlInfo: { title, image, description },
-        usersWhoLiked: resultUsersWhoLikedThePost,
-      });
-    }
-
     const { rows: result } = await postsRepository.getUserPosts(userId);
 
-    const arrayMap = result.map((post) =>
-      new Promise(async (resolve, reject) => {
-        const metadata = await urlMetadata(`${post.url}`);
-        const { rows: resultUsersWhoLikedThePost } =
-          await postsRepository.usersWhoLikedThePost(post.postId);
+    function savePostsData(post, metadata, resultUsersWhoLikedThePost, resultUsersWhoCommentedThePost) {
+			const { title, image, description } = metadata;
+			postsData.push({
+        ...post, 
+        urlInfo: { title, image, description },
+        usersWhoLiked: resultUsersWhoLikedThePost,
+        usersWhoCommented: resultUsersWhoCommentedThePost
+      });
+		};
 
-        resolve({ post, metadata, resultUsersWhoLikedThePost });
-      }).then(saveUserPostsData)
-    );
-    await Promise.all(arrayMap);
+		const arrayMap = result.map((post) =>
+			urlMetadata(`${post.url}`)
+        .then( async (metadata) => {
+          const { rows: resultUsersWhoLikedThePost } = await postsRepository.usersWhoLikedThePost(post.postId);
+          const { rows: resultUsersWhoCommentedThePost } = await postsRepository.usersWhoCommentedThePost(post.postId);
+          savePostsData(post, metadata, resultUsersWhoLikedThePost, resultUsersWhoCommentedThePost);
+        })
+        .catch((error) => console.log(error))
+		);
 
-    userPostsData.sort((a, b) => b.postId - a.postId);
+		await Promise.all(arrayMap);
+
+    postsData.sort((a, b) => b.postId - a.postId);
+
     return res.status(200).send(userPostsData);
   } catch (error) {
     return res.status(500).send(error);
@@ -101,30 +78,42 @@ const getUserPosts = async (req, res) => {
 const getHashtagPosts = async (req, res) => {
 	const hashtag = req.params.hashtag
     let postsData = [];
+
     try {
-        function savePostsData({ post, metadata, resultUsersWhoLikedThePost }) {
-			const { title, image, description } = metadata;
-			postsData.push({ ...post, urlInfo: { title, image, description }, usersWhoLiked: resultUsersWhoLikedThePost });
-		};
-        const { rows: result } = await postsRepository.getPostsByHashtags(hashtag);
-		const arrayMap = result.map((post) =>
-			new Promise(async (resolve, reject) => {
-				const metadata = await urlMetadata(`${post.url}`);
-				const { rows: resultUsersWhoLikedThePost} = await postsRepository.usersWhoLikedThePost(post.postId)
+      const { rows: result } = await postsRepository.getPostsByHashtags(hashtag);
 
-				resolve({ post, metadata, resultUsersWhoLikedThePost });
-			}).then(savePostsData)
-		);
-		await Promise.all(arrayMap);
+      function savePostsData(post, metadata, resultUsersWhoLikedThePost, resultUsersWhoCommentedThePost) {
+        const { title, image, description } = metadata;
+        postsData.push({
+          ...post, 
+          urlInfo: { title, image, description },
+          usersWhoLiked: resultUsersWhoLikedThePost,
+          usersWhoCommented: resultUsersWhoCommentedThePost
+        });
+      };
+  
+      const arrayMap = result.map((post) =>
+        urlMetadata(`${post.url}`)
+          .then( async (metadata) => {
+            const { rows: resultUsersWhoLikedThePost } = await postsRepository.usersWhoLikedThePost(post.postId);
+            const { rows: resultUsersWhoCommentedThePost } = await postsRepository.usersWhoCommentedThePost(post.postId);
+            savePostsData(post, metadata, resultUsersWhoLikedThePost, resultUsersWhoCommentedThePost);
+          })
+          .catch((error) => console.log(error))
+      );
+  
+      await Promise.all(arrayMap);
+  
+      postsData.sort((a, b) => b.postId - a.postId);
 
-        res.status(200).send(postsData);
+      return res.status(200).send(postsData);
     } catch (error) {
-        res.status(500).send(error);
+      return res.status(500).send(error);
     };
 };
 
 const like = async (req, res) => {
-  const postId = req.params.post;
+  const postId = req.params.postId;
   const { userId } = req.body;
 
   try {
@@ -139,7 +128,7 @@ const like = async (req, res) => {
 };
 
 const dislike = async (req, res) => {
-  const postId = req.params.post;
+  const postId = req.params.postId;
   const { userId } = req.body;
 
   try {
@@ -169,7 +158,7 @@ const postSearchUser = async (_req, res) => {
 
 const editPost = async (req, res) => {
   const editMessage = req.body;
-  const postId = req.params.post;
+  const postId = req.params.postId;
 
   try {
     await postsRepository.editMessage(editMessage.message, postId);
@@ -180,20 +169,8 @@ const editPost = async (req, res) => {
   };
 };
 
-const teste = async (req, res) => {
-  try {
-    console.log("entro")
-    const {rows: dataTeste} = await postsRepository.teste();
-
-    return res.status(200).send(dataTeste)
-  } catch (error) {
-    console.log("error: ", error)
-    return res.sendStatus(500);
-  }
-};
-
 const insertMessage = async (req, res) => {
-  const postId = req.params.post;
+  const postId = req.params.postId;
   const message = req.body;
 
   try {
@@ -202,7 +179,7 @@ const insertMessage = async (req, res) => {
     return res.sendStatus(202);
   } catch (error) {
     return res.sendStatus(500);
-  }
-}
+  };
+};
 
-export { getPosts, like, dislike, getUserPosts, postSearchUser, getHashtagPosts, editPost, teste, insertMessage };
+export { getPosts, like, dislike, getUserPosts, postSearchUser, getHashtagPosts, editPost, insertMessage };

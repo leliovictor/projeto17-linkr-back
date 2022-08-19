@@ -7,7 +7,7 @@ const getPosts = async (req, res) => {
   try {
     const page = req.query.page;
     const limit = 10;
-    const end = page * limit;
+    const end = (page-1) * limit;
 
     function savePostsData({ post, metadata, resultUsersWhoLikedThePost }) {
           const { title, image, description } = metadata;
@@ -51,7 +51,7 @@ const getUserPosts = async (req, res) => {
   try {
     const page = req.query.page;
     const limit = 10;
-    const end = page * limit;
+    const end = (page-1) * limit;
 
     function saveUserPostsData({ post, metadata, resultUsersWhoLikedThePost }) {
       const { title, image, description } = metadata;
@@ -93,7 +93,7 @@ const getHashtagPosts = async (req, res) => {
     try {
       const page = req.query.page;
       const limit = 10;
-      const end = page * limit;
+      const end = (page-1) * limit;
 
       function savePostsData({ post, metadata, resultUsersWhoLikedThePost }) {
 			const { title, image, description } = metadata;

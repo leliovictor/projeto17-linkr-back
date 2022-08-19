@@ -53,6 +53,7 @@ const getUserPosts = async (req, res) => {
 
   try {
     const { rows: result } = await postsRepository.getUserPosts(userId, end);
+    console.log("result userpost: ", result)
 
     function savePostsData(post, metadata, resultUsersWhoLikedThePost, resultUsersWhoCommentedThePost) {
 			const { title, image, description } = metadata;
@@ -92,7 +93,24 @@ const getHashtagPosts = async (req, res) => {
     const end = (page-1) * limit;
 
     try {
+      //let arraydefinitivo = []
+
       const { rows: result } = await postsRepository.getPostsByHashtags(hashtag, end);
+/*
+      for(let i = 0; i < result.length; i++) {
+        let igual = 0;
+        for(let j = 0; i < result.length; i++) {
+          if(result[i].postId == arraydefinitivo[j]?.postId) {
+            igual++;
+          }
+        }
+        if (igual == 0) {
+          arraydefinitivo.push(result[i])
+        }
+      }
+*/
+
+
       console.log("result hash: ", result)
 
       function savePostsData(post, metadata, resultUsersWhoLikedThePost, resultUsersWhoCommentedThePost) {
@@ -119,6 +137,10 @@ const getHashtagPosts = async (req, res) => {
   
       postsData.sort((a, b) => b.postId - a.postId);
       //console.log("vezes que entrou: ", postsData)
+
+  
+
+
       return res.status(200).send(postsData);
     } catch (error) {
       return res.status(500).send(error);

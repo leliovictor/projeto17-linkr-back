@@ -32,6 +32,7 @@ async function getUserPosts(userId, end) {
 }
 
 async function getPostsByHashtags(hashtag, end){
+  /*
     const query = `SELECT u.id AS "userId", u.username AS username, u."pictureUrl", p.url, p.message, p.likes, p.id AS "postId"
     FROM users u
     JOIN posts p
@@ -42,7 +43,16 @@ async function getPostsByHashtags(hashtag, end){
     ON hp."hashtagId" = h.id
     WHERE p.message ILIKE $1
     LIMIT 10 OFFSET $2`
+*/
 
+  const query = `
+    SELECT u.id AS "userId", u.username AS username, u."pictureUrl", p.url, p.message, p.likes, p.id AS "postId"
+    FROM users u
+    JOIN posts p
+    ON p."userId" = u.id
+    WHERE p.message ILIKE $1
+    LIMIT 10 OFFSET $2
+    `
     const values = [`%#${hashtag}%`, end]
 
     return connection.query(query,values)

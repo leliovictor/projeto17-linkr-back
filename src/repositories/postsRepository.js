@@ -1,12 +1,21 @@
 import connection from "../config/db.js";
 
-async function getPosts(end) {
-  return connection.query(`
-    SELECT  users.username, users."pictureUrl", posts.url, posts.message, posts."userId", posts.likes, posts.id AS "postId"
-    FROM users 
-    JOIN posts ON posts."userId" = users.id
-    ORDER BY posts.id DESC LIMIT 10 OFFSET $1
-    `, [end]);
+async function getPosts(id, end) {
+  const query = `
+  SELECT  
+  users.username, users."pictureUrl", posts.url, posts.message, posts."userId", posts.likes, 
+  posts.id AS "postId"
+  FROM users 
+  JOIN posts ON posts."userId" = users.id
+  LEFT JOIN followers ON (followers.requested = posts."userId")
+  WHERE followers.request = $1 OR posts."userId" = $1
+  GROUP BY users.username, users."pictureUrl", posts.id, followers.requested
+  ORDER BY posts.id DESC LIMIT 10 OFFSET $2
+  `;
+
+  const values = [id, end];
+
+  return connection.query(query, values);
 }
 
 async function getUserPosts(userId, end) {
@@ -85,27 +94,85 @@ async function usersWhoLikedThePost(postId) {
   return connection.query(
     `
     SELECT users.username
-	FROM users
-	JOIN "postsUsers-likes" ON "postsUsers-likes"."userId" = users.id
-	WHERE "postsUsers-likes"."postId" = $1`,
+    FROM users
+    JOIN "postsUsers-likes" ON "postsUsers-likes"."userId" = users.id
+    WHERE "postsUsers-likes"."postId" = $1`,
     [postId]
   );
 }
 
-async function selectUserByLikeName(name) {
+async function selectUserByLikeName(name, id) {
   const query = `
-    SELECT id, username, "pictureUrl" 
-    FROM users 
-    WHERE username LIKE $1
-    ORDER BY username ASC
+  SELECT u.id, u.username, u."pictureUrl", f.request AS following
+  FROM users u 
+  LEFT JOIN followers f ON u.id = f.requested
+  WHERE username LIKE $1
+  ORDER BY CASE WHEN f.request = $2 THEN 0 ELSE 1 END, u.username ASC
     `;
 
-  const value = [`${name}%`];
+  const value = [`${name}%`, id];
 
   return connection.query(query, value);
 }
 
-const postsRepository = {
+async function selectUserFollow(userId, followId) {
+  const query = `
+  SELECT * FROM followers
+  WHERE request=$1 AND requested=$2
+  `;
+
+  const values = [userId, followId];
+
+  return connection.query(query, values);
+}
+
+async function deleteUserFollow(userId, followId) {
+  const query =`
+  DELETE FROM followers WHERE request=$1 AND requested=$2
+  `;
+
+  const values = [userId, followId];
+
+  return connection.query(query, values);
+}
+
+async function insertUserFollow(userId, followId) {
+  const query = `
+  INSERT INTO followers (request, requested) VALUES ($1, $2)
+  `;
+
+  const values = [userId, followId];
+
+  return connection.query(query, values);
+}
+
+async function editMessage(message, postId) {
+  return connection.query(
+    `
+    UPDATE posts
+    SET message = $1
+    WHERE id = $2`,
+    [message, postId]
+  );
+}
+
+async function insertMessage (postId, userId, text) {
+  return connection.query(`
+  INSERT INTO comments ("postId", "userId", "text")
+  VALUES ($1, $2, $3)`,
+  [postId, userId, text]);
+};
+
+async function usersWhoCommentedThePost (postId) {
+  return connection.query(`
+  SELECT users.id AS "userId", users.username, users."pictureUrl", comments.text
+  FROM comments
+  JOIN users ON users.id = comments."userId"
+  WHERE comments."postId" = $1`,
+  [postId])
+};
+
+export const postsRepository = {
   getPosts,
   getUserPosts,
   getPostsByHashtags,
@@ -116,6 +183,10 @@ const postsRepository = {
   deleteLiker,
   usersWhoLikedThePost,
   selectUserByLikeName,
+  editMessage,
+  insertMessage,
+  usersWhoCommentedThePost,
+  selectUserFollow,
+  deleteUserFollow,
+  insertUserFollow,
 };
-
-export default postsRepository;

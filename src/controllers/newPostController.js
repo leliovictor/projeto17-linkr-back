@@ -38,6 +38,7 @@ export async function newPost(_req, res) {
         }
       }
     }
+    
     return res.sendStatus(201);
   } catch (error) {
     console.log(error);

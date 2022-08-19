@@ -1,11 +1,11 @@
 import { Router } from "express";
-import { getPosts, like, dislike } from "../controllers/postsController.js"
+
+import { getPosts } from "../controllers/postsController.js"
+import { countFollowing } from "../middlewares/timelineMiddleware.js";
+import { checkAuthentication } from "../middlewares/token.middleware.js";
 
 const timelineRouter = Router();
 
-timelineRouter.get("/timeline", getPosts);
-timelineRouter.post("/timeline/:post/like", like);
-timelineRouter.post("/timeline/:post/dislike", dislike);
+timelineRouter.get("/timeline", checkAuthentication, countFollowing, getPosts);
 
 export default timelineRouter;
-

@@ -12,4 +12,4 @@ postRouter.post("/post/:postId/edit", checkAuthentication, editPost);
 postRouter.post("/post/:postId/comment", checkAuthentication, insertMessage);
 postRouter.delete("/post/:postId/delete", checkAuthentication, checkPostUser, deletePost);
 
-export default postRouter
+export default postRouter;

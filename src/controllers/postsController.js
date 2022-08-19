@@ -8,6 +8,8 @@ const getPosts = async (_req, res) => {
   const page = _req.query.page;
   const limit = 10;
   const end = (page-1) * limit;
+  console.log("pageBack: ", page, "end: ", end)
+
   try {
     const { rows: result } = await postsRepository.getPosts(id, end);
 
@@ -43,7 +45,7 @@ const getPosts = async (_req, res) => {
 
 const getUserPosts = async (req, res) => {
   const userId = req.params.id;
-  let userPostsData = [];
+  let postsData = [];
   const followStatus = res.locals.follow;
   const page = req.query.page;
   const limit = 10;
@@ -76,7 +78,7 @@ const getUserPosts = async (req, res) => {
 
     postsData.sort((a, b) => b.postId - a.postId);
 
-    return res.status(200).send(userPostsData);
+    return res.status(200).send(postsData);
   } catch (error) {
     return res.status(500).send(error);
   }
@@ -91,6 +93,7 @@ const getHashtagPosts = async (req, res) => {
 
     try {
       const { rows: result } = await postsRepository.getPostsByHashtags(hashtag, end);
+      console.log("result hash: ", result)
 
       function savePostsData(post, metadata, resultUsersWhoLikedThePost, resultUsersWhoCommentedThePost) {
         const { title, image, description } = metadata;
@@ -115,7 +118,7 @@ const getHashtagPosts = async (req, res) => {
       await Promise.all(arrayMap);
   
       postsData.sort((a, b) => b.postId - a.postId);
-
+      //console.log("vezes que entrou: ", postsData)
       return res.status(200).send(postsData);
     } catch (error) {
       return res.status(500).send(error);
